@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>Java-Practice</artifactId>
+    <groupId>dadflyblue</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>CS-Princeton</artifactId>
+  <description>
+        Practice for:
+         - https://introcs.cs.princeton.edu/java/home/
+         - https://www.coursera.org/learn/cs-programming-java
+         - https://www.coursera.org/learn/cs-algorithms-theory-machines
+  </description>
+
+  <properties>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <!-- about java unnamed package usage limitation: https://rules.sonarsource.com/java/RSPEC-1220 -->
+    <!-- about maven system-dependencies(workaround):
+       https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#system-dependencies -->
+    <dependency>
+      <groupId>cs.princeton</groupId>
+      <artifactId>stdlib</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/java/stdlib.jar</systemPath>
+    </dependency>
+  </dependencies>
+
+</project>

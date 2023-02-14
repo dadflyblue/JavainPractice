@@ -1,0 +1,5 @@
+
+target/
+#.vscode ## leaves it because it's used to set vscode ide
+*.iml
+.idea
