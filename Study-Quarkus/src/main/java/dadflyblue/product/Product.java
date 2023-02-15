@@ -1,4 +1,4 @@
-package dadflyblue.store;
+package dadflyblue.product;
 
 import javax.persistence.Entity;
 

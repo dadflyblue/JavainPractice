@@ -1,4 +1,4 @@
-package dadflyblue.store;
+package dadflyblue.product;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.smallrye.common.constraint.NotNull;
@@ -19,8 +19,9 @@ public class ProductResource {
 
   @GET
   @Transactional
-  public PageResult<Product> getProductsByCatogery(@QueryParam("category") String category, 
-    @QueryParam("pageIndex") int pageIndex, @QueryParam("pageSize") int pageSize) {
+  public PageResult<Product> getProductsByCategory(
+          @QueryParam("category") String category, @QueryParam("pageIndex") int pageIndex,
+          @QueryParam("pageSize") int pageSize) {
     return guard.get(() -> {
       PanacheQuery<Product> query;
       if (category == null) {
@@ -52,7 +53,8 @@ public class ProductResource {
   @Bulkhead(5)
   public Product updateProduct(@NotNull Product product) {
     Product.update(
-      "set name=?1, price=?2, category=?3 where id=?4", product.name, product.price, product.category, product.id);
+      "set name=?1, price=?2, category=?3 where id=?4", 
+      product.name, product.price, product.category, product.id);
     return product;
   }
 

@@ -3,6 +3,7 @@ greeting: Hello World!
 products:
   request:
     limit: 10
+fruity/mp-rest/url: https://fruityvice.com
 
 "%prod":
   quarkus:
