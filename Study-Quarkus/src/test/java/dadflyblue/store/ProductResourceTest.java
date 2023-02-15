@@ -24,6 +24,19 @@ public class ProductResourceTest {
   }
 
   @Test
+  public void testGetFirstPageOfProductsWithCategoryOk() {
+    given()
+        .queryParam("pageIndex", 1)
+        .queryParam("pageSize", 5)
+        .queryParam("category", "toy")
+        .when().get("/products")
+        .then()
+        .statusCode(200)
+        .body("list", is(notNullValue()),
+            "pageCount", is(not(0)));
+  }
+
+  @Test
   public void testGetOneProductOk() {
     given()
         .pathParam("id", 1)
@@ -37,7 +50,7 @@ public class ProductResourceTest {
   @Test
   public void testCreateOneProductOk() {
     given()
-        .body(Product.newProduct("Tiger Toy2", 10_000L, null))
+        .body(Product.newProduct("Tiger Toy2", 10_000L, "toy", null))
         .contentType(ContentType.JSON)
         .when().put("/products")
         .then()
@@ -49,7 +62,7 @@ public class ProductResourceTest {
   @Test
   public void testUpdateOneProductOk() {
     given()
-        .body(Product.newProduct("ZOROBOT", 10_000L, 2L))
+        .body(Product.newProduct("ZOROBOT", 10_000L, "toy", 2L))
         .contentType(ContentType.JSON)
         .when().post("/products")
         .then()
@@ -67,16 +80,16 @@ public class ProductResourceTest {
   @Test
   public void testDeleteOneProductOk() {
     given()
-            .pathParam("id", 3)
-            .when().delete("/products/{id}")
-            .then()
-            .statusCode(200);
+        .pathParam("id", 3)
+        .when().delete("/products/{id}")
+        .then()
+        .statusCode(200);
 
     given()
-            .pathParam("id", 3)
-            .when().get("/products/{id}")
-            .then()
-            .statusCode(404);
+        .pathParam("id", 3)
+        .when().get("/products/{id}")
+        .then()
+        .statusCode(404);
   }
 
 }

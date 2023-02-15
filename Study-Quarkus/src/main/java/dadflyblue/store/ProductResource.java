@@ -1,5 +1,6 @@
 package dadflyblue.store;
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.smallrye.common.constraint.NotNull;
 import io.smallrye.faulttolerance.api.FaultTolerance;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
@@ -18,9 +19,15 @@ public class ProductResource {
 
   @GET
   @Transactional
-  public PageResult<Product> getProducts(@QueryParam("pageIndex") int pageIndex, @QueryParam("pageSize") int pageSize) {
+  public PageResult<Product> getProductsByCatogery(@QueryParam("category") String category, 
+    @QueryParam("pageIndex") int pageIndex, @QueryParam("pageSize") int pageSize) {
     return guard.get(() -> {
-      var query = Product.findAll().page(pageIndex, pageSize);
+      PanacheQuery<Product> query;
+      if (category == null) {
+        query = Product.findAll().page(pageIndex, pageSize);
+      } else {
+        query = Product.find("upper(category)", category.toUpperCase()).page(pageIndex, pageSize);
+      }
       return PageResult.newPage(pageIndex, pageSize, query.pageCount(), query.list());
     });
   }
@@ -44,7 +51,8 @@ public class ProductResource {
   @Transactional
   @Bulkhead(5)
   public Product updateProduct(@NotNull Product product) {
-    Product.update("set name=?1, price=?2 where id=?3", product.name, product.price, product.id);
+    Product.update(
+      "set name=?1, price=?2, category=?3 where id=?4", product.name, product.price, product.category, product.id);
     return product;
   }
 
