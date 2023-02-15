@@ -1,5 +1,6 @@
 package dadflyblue.fruit;
 
+import io.quarkus.logging.Log;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.transaction.Transactional;
@@ -26,8 +27,16 @@ public class FruitResource {
       fruits = Fruit.listAll();
     }
     return fruits.parallelStream()
-            .map(f -> FruitDTO.of(f, viceService.getFruitByName(f.name)))
+            .map(this::fromFruit)
             .collect(Collectors.toList());
+  }
+
+  private FruitDTO fromFruit(Fruit fruit) {
+    Log.infov("start convert fruit: {0}", fruit.name);
+    FruitDTO ret;
+    ret = FruitDTO.of(fruit, viceService.getFruitByName(fruit.name));
+    Log.infov("complete convert fruit: {0}", fruit.name);
+    return ret;
   }
 
   @Transactional

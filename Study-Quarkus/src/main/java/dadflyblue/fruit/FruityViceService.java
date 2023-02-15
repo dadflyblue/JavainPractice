@@ -1,5 +1,6 @@
 package dadflyblue.fruit;
 
+import io.quarkus.logging.Log;
 import org.eclipse.microprofile.faulttolerance.*;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
@@ -14,9 +15,10 @@ import javax.ws.rs.core.MediaType;
 public interface FruityViceService {
   @GET
   @Path("/{name}")
-  @Retry(maxRetries = 2, delay = 1000)
+  @Retry
+  @Timeout // this timeout doesn't work very well.
   @Fallback(FruityViceFallback.class)
-  @CircuitBreaker(requestVolumeThreshold = 4, failureRatio = 0.75, delay = 5000)
+  @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.75, delay = 5000)
   @Produces(MediaType.APPLICATION_JSON)
   FruityVice getFruitByName(@PathParam("name") String name);
 
@@ -25,6 +27,7 @@ public interface FruityViceService {
   class FruityViceFallback implements FallbackHandler<FruityVice> {
     @Override
     public FruityVice handle(ExecutionContext context) {
+      Log.warn("fruity request falls back:", context.getFailure());
       return EMPTY_FRUITY_VICE;
     }
   }
