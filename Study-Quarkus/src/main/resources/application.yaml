@@ -3,7 +3,9 @@ greeting: Hello World!
 products:
   request:
     limit: 10
+
 fruity/mp-rest/url: https://fruityvice.com
+beers/mp-rest/url: https://api.punkapi.com
 
 "%prod":
   quarkus:
