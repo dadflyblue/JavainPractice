@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.*;
 class BeerResourceTest {
 
   @Test
-  void testGetBeersOK() {
+  void testGetBeersOk() {
     given()
             .when()
             .get("/beers")

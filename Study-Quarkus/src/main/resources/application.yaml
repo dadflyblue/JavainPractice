@@ -7,6 +7,12 @@ products:
 fruity/mp-rest/url: https://fruityvice.com
 beers/mp-rest/url: https://api.punkapi.com
 
+quarkus:
+  hibernate-orm:
+    log:
+      sql: true
+
+
 "%prod":
   quarkus:
     datasource:

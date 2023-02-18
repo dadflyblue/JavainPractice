@@ -1,6 +1,7 @@
 package dadflyblue.fruit;
 
-import io.quarkus.logging.Log;
+import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.transaction.Transactional;
@@ -9,8 +10,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/fruits")
 public class FruitResource {
@@ -19,24 +18,22 @@ public class FruitResource {
   FruityViceService viceService;
 
   @GET
-  public List<FruitDTO> fruits(@QueryParam("season") String season) {
-    List<Fruit> fruits;
+  @Transactional
+  public Multi<FruitDTO> fruits(@QueryParam("season") String season) {
+    Multi<Fruit> fruits;
     if (season != null) {
-      fruits = Fruit.findBySeason(season);
+      fruits = Fruit.findBySeasonAsync(season);
     } else {
-      fruits = Fruit.listAll();
+      fruits = Fruit.findAllAsync();
     }
-    return fruits.parallelStream()
-            .map(this::fromFruit)
-            .collect(Collectors.toList());
+
+    return fruits.onItem()
+            .transformToUniAndConcatenate(this::fromFruit);
   }
 
-  private FruitDTO fromFruit(Fruit fruit) {
-    Log.infov("start convert fruit: {0}", fruit.name);
-    FruitDTO ret;
-    ret = FruitDTO.of(fruit, viceService.getFruitByName(fruit.name));
-    Log.infov("complete convert fruit: {0}", fruit.name);
-    return ret;
+  private Uni<FruitDTO> fromFruit(Fruit fruit) {
+    return viceService.getFruitByName(fruit.name)
+            .onItem().transform(f -> FruitDTO.of(fruit, f));
   }
 
   @Transactional

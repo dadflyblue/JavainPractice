@@ -53,8 +53,8 @@ public class ProductResource {
   @Bulkhead(5)
   public Product updateProduct(@NotNull Product product) {
     Product.update(
-      "set name=?1, price=?2, category=?3 where id=?4", 
-      product.name, product.price, product.category, product.id);
+      "set name=?1, price=?2, category=?3, stock=?4 where id=?5",
+      product.name, product.price, product.category, product.stock, product.id);
     return product;
   }
 

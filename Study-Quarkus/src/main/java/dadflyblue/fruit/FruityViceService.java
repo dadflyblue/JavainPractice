@@ -1,6 +1,7 @@
 package dadflyblue.fruit;
 
 import io.quarkus.logging.Log;
+import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.faulttolerance.*;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
@@ -20,15 +21,15 @@ public interface FruityViceService {
   @Fallback(FruityViceFallback.class)
   @CircuitBreaker(requestVolumeThreshold = 10, failureRatio = 0.75, delay = 5000)
   @Produces(MediaType.APPLICATION_JSON)
-  FruityVice getFruitByName(@PathParam("name") String name);
+  Uni<FruityVice> getFruitByName(@PathParam("name") String name);
 
   FruityVice EMPTY_FRUITY_VICE = FruityVice.of("empty", FruityVice.Nutritions.empty());
 
-  class FruityViceFallback implements FallbackHandler<FruityVice> {
+  class FruityViceFallback implements FallbackHandler<Uni<FruityVice>> {
     @Override
-    public FruityVice handle(ExecutionContext context) {
+    public Uni<FruityVice> handle(ExecutionContext context) {
       Log.warn("fruity request falls back:", context.getFailure());
-      return EMPTY_FRUITY_VICE;
+      return Uni.createFrom().item(EMPTY_FRUITY_VICE);
     }
   }
 }

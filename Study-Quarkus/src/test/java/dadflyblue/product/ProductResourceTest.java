@@ -38,18 +38,18 @@ public class ProductResourceTest {
   @Test
   public void testGetOneProductOk() {
     given()
-            .pathParam("id", 1)
+            .pathParam("id", 2)
             .when().get("/products/{id}")
             .then()
             .statusCode(200)
-            .body("id", is(1),
+            .body("id", is(2),
                     "name", is("Tiger Toy"));
   }
 
   @Test
   public void testCreateOneProductOk() {
     given()
-            .body(Product.newProduct("Tiger Toy2", 10_000L, "toy", null))
+            .body(Product.newProduct("Tiger Toy2", 10_000L, "toy", 3,null))
             .contentType(ContentType.JSON)
             .when().put("/products")
             .then()
@@ -61,7 +61,7 @@ public class ProductResourceTest {
   @Test
   public void testUpdateOneProductOk() {
     given()
-            .body(Product.newProduct("ZOROBOT", 10_000L, "toy", 2L))
+            .body(Product.newProduct("ZOROBOT", 10_000L, "toy", 3, 2L))
             .contentType(ContentType.JSON)
             .when().post("/products")
             .then()
