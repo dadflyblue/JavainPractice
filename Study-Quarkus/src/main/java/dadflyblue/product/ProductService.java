@@ -57,39 +57,6 @@ public class ProductService {
     }
   }
 
-  OrderInfo handleOrder(OrderInfo order) {
-    switch (order.orderStatus) {
-      case RESERVE_INVENTORY:
-        reserveOrder(order)
-            .onCompletion().invoke(
-                    () -> publisher.publish("orders",
-                            order.setStatus(OrderStatus.INVENTORY_SUCCESS)))
-            .onFailure().invoke(
-                    (t) -> publisher.publish("orders",
-                            order.setStatus(OrderStatus.INVENTORY_FAILURE).setMessage(t.getMessage())))
-            .subscribe().with(
-                    item -> Log.infov("product inventory reserved succeed with: {0}", item),
-                    t -> Log.error("product inventory reserved failed", t)
-            );
-        break;
-      case REVERT_INVENTORY:
-        revertOrder(order)
-            .onCompletion().invoke(
-                    () -> publisher.publish("orders",
-                            order.setStatus(OrderStatus.INVENTORY_REVERT_SUCCESS)))
-            .onFailure().invoke(
-                    t -> publisher.publish("orders",
-                            order.setStatus(OrderStatus.INVENTORY_REVERT_FAILURE).setMessage(t.getMessage()))
-            )
-            .subscribe().with(
-                    item -> Log.infov("product inventory reverted succeed with: {0}", item),
-                    t -> Log.error("product inventory reverted failed", t)
-            );
-        break;
-    }
-    return order;
-  }
-
   Multi<Product> reserveOrder(OrderInfo order) {
     Log.infov("reserve order with: Order<{0}>", order.id);
     return Uni.createFrom().item(order)
