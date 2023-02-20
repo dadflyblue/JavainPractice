@@ -1,6 +1,5 @@
 package dadflyblue.order;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
@@ -29,6 +28,7 @@ public class OrderResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
+  @Transactional
   public Multi<Order> orders() {
     Log.info("Get all orders invoked.");
     return Order.getAllAsync();

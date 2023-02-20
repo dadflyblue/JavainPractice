@@ -1,5 +1,6 @@
 package dadflyblue.order;
 
+import dadflyblue.common.OrderInfo;
 import io.quarkus.logging.Log;
 import io.quarkus.vertx.ConsumeEvent;
 import io.smallrye.mutiny.Uni;
@@ -18,36 +19,46 @@ public class OrderService {
   @Transactional
   public Uni<Order> createOrder(Order order) {
     return Order.saveAsync(order.setStatus(OrderStatus.INITIATION_SUCCESS))
-            .onItem().transform(this::publishStatusChanged);
+            .onItem().transform(o -> publishOrderEvent(order, "orders"));
   }
 
-  Order publishStatusChanged(Order order) {
-    publisher.publish("orders", order);
+  Order publishOrderEvent(Order order, String address) {
+    publisher.publish(address, OrderInfo.from(order));
     return order;
   }
 
   @ConsumeEvent(value = "orders")
-  void onOrderReceived(Order o) {
-    var order = Order.<Order>findById(o.id);
-    if (order == null) {
-      Log.warnv("Receive an order without a valid id - {0}", o);
-      return;
-    }
+  @SuppressWarnings("unused")
+  void onOrderReceived(OrderInfo order) {
+    Log.infov("start to handle with order event: Order<{0}>", order.id);
+    Uni.createFrom().item(order)
+        .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+        .onItem().transformToUni(o -> Order.findByIdAsync(o.id))
+        .onItem().ifNull().fail()
+        .onItem().transform(this::handleOrderStatus)
+        .onItem().transformToUni(Order::updateAsync)
+        .subscribe().with(
+            o -> Log.infov("handled with order event succeed: {0}", o),
+            t -> Log.error("handled with order event failed: " + order, t)
+        );
+  }
 
-    switch (o.orderStatus) {
+  Order handleOrderStatus(Order order) {
+    switch (order.orderStatus) {
       case INITIATION_SUCCESS:
         order.orderStatus = OrderStatus.RESERVE_INVENTORY;
+        publishOrderEvent(order, "orders.produce");
         break;
       case INVENTORY_SUCCESS:
         order.orderStatus = OrderStatus.PREPARE_SHIPPING;
+        publishOrderEvent(order, "orders.shipping");
         break;
       case SHIPPING_FAILURE:
         order.orderStatus = OrderStatus.REVERT_INVENTORY;
+        publishOrderEvent(order, "orders.produce");
         break;
     }
-
-    Order.save(order.setMessage(o.responseMessage));
-    publisher.publish("orders", order);
+    return order;
   }
 
 }

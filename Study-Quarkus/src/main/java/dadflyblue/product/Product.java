@@ -1,10 +1,10 @@
 package dadflyblue.product;
 
-import javax.persistence.Entity;
-
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.infrastructure.Infrastructure;
+
+import javax.persistence.Entity;
+import javax.transaction.Transactional;
 
 @Entity(name = "products")
 public class Product extends PanacheEntity {
@@ -25,13 +25,13 @@ public class Product extends PanacheEntity {
     return p;
   }
 
-  public static Product save(Product product) {
-    Product.persist(product);
-    return product;
-  }
-
-  public static Uni<Product> saveAsync(Product product) {
-    return Uni.createFrom().item(product).runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-            .onItem().transform(Product::save);
+  @Transactional
+  public static Uni<Product> updateAsync(Product product) {
+    return Uni.createFrom().item(product).onItem()
+            .transform(p -> {
+              update("set name=?1, price=?2, category=?3, stock=?4 where id=?5",
+                      p.name, p.price, p.category, p.stock, p.id);
+              return p;
+            });
   }
 }

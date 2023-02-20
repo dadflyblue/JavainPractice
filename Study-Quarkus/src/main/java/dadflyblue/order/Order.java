@@ -3,14 +3,12 @@ package dadflyblue.order;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.infrastructure.Infrastructure;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -19,7 +17,7 @@ public class Order extends PanacheEntity {
 
   public String userId;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "order", fetch = FetchType.EAGER)
   public Set<OrderItem> orderItems = new HashSet<>();
 
   public Long total;
@@ -53,32 +51,39 @@ public class Order extends PanacheEntity {
     return this;
   }
 
-  public Order setMessage(String message) {
-    this.responseMessage = message;
-    return this;
-  }
-
   @Transactional
   public static Uni<Order> saveAsync(Order order) {
     return Uni.createFrom().item(order)
-            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
             .onItem().transform(Order::save);
   }
 
   @Transactional
+  public static Uni<Order> updateAsync(Order order) {
+    return Uni.createFrom().item(order)
+            .onItem().transform(o -> {
+              update("set " +
+                      "userId=?1, total=?2, paymentMode=?3, addressId=?4, " +
+                      "shippingDate=?5, orderStatus=?6, responseMessage=?7 " +
+                      "where id=?8",
+                      o.userId, o.total, o.paymentMode, o.shippingAddress.id,
+                      o.shippingDate, o.orderStatus, o.responseMessage, o.id);
+              return o;
+            });
+  }
+
+  @Transactional
   public static Multi<Order> getAllAsync() {
-    return Multi.createFrom()
-            .items(Order::getAll)
-            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+    return Multi.createFrom().items(
+            () -> Order.<Order>listAll().stream());
   }
 
   @Transactional
-  public static Stream<Order> getAll() {
-    return Order.<Order>listAll().stream();
+  public static Uni<Order> findByIdAsync(Long id) {
+    return Uni.createFrom().item(() -> Order.findById(id));
   }
 
   @Transactional
-  public static Order save(Order order) {
+  static Order save(Order order) {
     order.orderItems.forEach(i -> i.setOrder(order));
     Order.persist(order);
     return order;

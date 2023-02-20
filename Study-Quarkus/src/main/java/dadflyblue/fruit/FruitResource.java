@@ -36,11 +36,12 @@ public class FruitResource {
             .onItem().transform(f -> FruitDTO.of(fruit, f));
   }
 
-  @Transactional
   @POST
-  public Response newFruit(Fruit fruit) {
+  @Transactional
+  public Uni<Response> newFruit(Fruit fruit) {
     fruit.id = null;
     fruit.persist();
-    return Response.status(Response.Status.CREATED).entity(fruit).build();
+    return Uni.createFrom().item(
+            Response.status(Response.Status.CREATED).entity(fruit).build());
   }
 }

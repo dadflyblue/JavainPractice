@@ -25,7 +25,7 @@ public class BeerGenerator {
 
   @Outgoing("beers")
   Multi<Beer> beers() {
-    List<Beer> beers = beerService.getBeers(10);
+    List<Beer> beers = beerService.getBeers(10).await().indefinitely();
     return Multi.createFrom().ticks()
             .every(Duration.ofSeconds(1))
             .onOverflow().drop()

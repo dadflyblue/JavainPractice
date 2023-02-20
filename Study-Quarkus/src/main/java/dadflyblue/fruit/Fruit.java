@@ -2,7 +2,6 @@ package dadflyblue.fruit;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.mutiny.Multi;
-import io.smallrye.mutiny.infrastructure.Infrastructure;
 
 import javax.persistence.Entity;
 
@@ -21,13 +20,12 @@ public class Fruit extends PanacheEntity {
   }
 
   public static Multi<Fruit> findAllAsync() {
-    return Multi.createFrom().<Fruit>iterable(listAll())
-            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+    return Multi.createFrom().items(
+            () -> Fruit.<Fruit>listAll().stream());
   }
 
   public static Multi<Fruit> findBySeasonAsync(String season) {
-    return Multi.createFrom()
-            .<Fruit>iterable(find("upper(season)", season.toUpperCase()).list())
-            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+    return Multi.createFrom().items(
+            () -> Fruit.<Fruit>find("upper(season)", season.toUpperCase()).list().stream());
   }
 }

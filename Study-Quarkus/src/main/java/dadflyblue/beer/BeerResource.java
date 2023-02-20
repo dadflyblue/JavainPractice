@@ -1,8 +1,6 @@
 package dadflyblue.beer;
 
 import io.smallrye.mutiny.Multi;
-import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.infrastructure.Infrastructure;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.ws.rs.GET;
@@ -22,12 +20,11 @@ public class BeerResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Multi<Beer> beers() {
     return Multi.createBy().repeating()
-            .supplier(
-                    () -> new AtomicInteger(1),
-                    i -> beerService.getBeers(i.getAndIncrement())
+            .uni(
+                  () -> new AtomicInteger(1),
+                  i -> beerService.getBeers(i.getAndIncrement())
             )
             .until(List::isEmpty)
-            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
             .onItem().<Beer>disjoint()
             .select().where(b -> b.abv > 15.0);
   }
