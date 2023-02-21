@@ -51,6 +51,11 @@ public class Order extends PanacheEntity {
     return this;
   }
 
+  public Order setResponseMessage(String responseMessage) {
+    this.responseMessage = responseMessage;
+    return this;
+  }
+
   @Transactional
   public static Uni<Order> saveAsync(Order order) {
     return Uni.createFrom().item(order)
