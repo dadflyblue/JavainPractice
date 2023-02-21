@@ -35,7 +35,7 @@ public class BeerGenerator {
   @Incoming("beers")
   @Outgoing("groups")
   public Multi<List<Beer>> group(Multi<Beer> stream) {
-    return stream.group().intoLists().every(Duration.ofSeconds(3));
+    return stream.skip().first(Duration.ofSeconds(5)).group().intoLists().every(Duration.ofSeconds(5));
   }
 
   @Incoming("groups")

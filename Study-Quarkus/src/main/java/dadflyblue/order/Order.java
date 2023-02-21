@@ -67,6 +67,7 @@ public class Order extends PanacheEntity {
                       "where id=?8",
                       o.userId, o.total, o.paymentMode, o.shippingAddress.id,
                       o.shippingDate, o.orderStatus, o.responseMessage, o.id);
+              flush();
               return o;
             });
   }
@@ -78,14 +79,15 @@ public class Order extends PanacheEntity {
   }
 
   @Transactional
-  public static Uni<Order> findByIdAsync(Long id) {
-    return Uni.createFrom().item(() -> Order.findById(id));
-  }
-
-  @Transactional
   static Order save(Order order) {
     order.orderItems.forEach(i -> i.setOrder(order));
     Order.persist(order);
+    Order.flush();
     return order;
+  }
+
+  @Override
+  public String toString() {
+    return "Order<" + id + ", " + orderStatus + ">";
   }
 }

@@ -1,6 +1,6 @@
 -- bellow fake data is only used in dev or test mode
 
-INSERT INTO addresses(id,name,house,street,city,zip) VALUES (nextval('hibernate_sequence'), 'ShopRite of Hoboken', '900', 'Madison St', 'Hoboken', '07030');
+INSERT INTO addresses(id,name,house,street,city,state,zip) VALUES (nextval('hibernate_sequence'), 'ShopRite of Hoboken', '900', 'Madison St', 'Hoboken', 'NJ', '07030');
 
 INSERT INTO products(id,name,price,category,stock) VALUES (nextval('hibernate_sequence'),'Tiger Toy', 1200, 'toy', 3);
 INSERT INTO products(id,name,price,category,stock) VALUES (nextval('hibernate_sequence'),'ZOROBOT', 6500, 'toy', 2);

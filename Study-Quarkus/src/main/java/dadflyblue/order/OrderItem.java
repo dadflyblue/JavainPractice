@@ -11,7 +11,7 @@ import javax.persistence.ManyToOne;
 public class OrderItem extends PanacheEntity {
   @ManyToOne
   @JoinColumn(name="orderId", nullable = false)
-  @JsonIgnoreProperties({"orderItems"}) // avoid the cycle of json serialization
+  @JsonIgnore
   public Order order;
   public long productId;
   public int quantity;

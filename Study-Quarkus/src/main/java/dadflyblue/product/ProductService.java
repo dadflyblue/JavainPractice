@@ -22,43 +22,43 @@ public class ProductService {
   EventBus publisher;
 
   @ConsumeEvent(value = "orders.produce")
-  void onOrderEvent(OrderInfo order) {
-    Log.infov("on order event received with: {0}", order);
+  void onInventoryEvent(OrderInfo order) {
+    Log.infov("product service starts to handle order event: Order<{0}, {1}>", order.id, order.orderStatus);
     switch (order.orderStatus) {
       case RESERVE_INVENTORY:
         reserveOrder(order)
-                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                .onCompletion().invoke(
-                        () -> publisher.publish("orders",
-                                order.setStatus(OrderStatus.INVENTORY_SUCCESS)))
-                .onFailure().invoke(
-                        (t) -> publisher.publish("orders",
-                                order.setStatus(OrderStatus.INVENTORY_FAILURE).setMessage(t.getMessage())))
-                .subscribe().with(
-                        item -> Log.infov("product inventory reserved succeed with: {0}", item),
-                        t -> Log.error("product inventory reserved failed", t)
-                );
+            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+            .onCompletion()
+            .invoke(() -> publishOrderEvent(order.setStatus(OrderStatus.INVENTORY_SUCCESS)))
+            .onFailure()
+            .invoke((t) -> publishOrderEvent(order.setMessage(t.getMessage()).setStatus(OrderStatus.INVENTORY_FAILURE)))
+            .subscribe()
+            .with(
+                    item -> Log.infov("product inventory reserved succeed with: {0}", item),
+                    t -> Log.error("product inventory reserved failed", t));
         break;
       case REVERT_INVENTORY:
         revertOrder(order)
-                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-                .onCompletion().invoke(
-                        () -> publisher.publish("orders",
-                                order.setStatus(OrderStatus.INVENTORY_REVERT_SUCCESS)))
-                .onFailure().invoke(
-                        t -> publisher.publish("orders",
-                                order.setStatus(OrderStatus.INVENTORY_REVERT_FAILURE).setMessage(t.getMessage()))
-                )
-                .subscribe().with(
-                        item -> Log.infov("product inventory reverted succeed with: {0}", item),
-                        t -> Log.error("product inventory reverted failed", t)
-                );
+            .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
+            .onCompletion()
+            .invoke(() -> publishOrderEvent(order.setStatus(OrderStatus.INVENTORY_REVERT_SUCCESS)))
+            .onFailure()
+            .invoke((t) -> publishOrderEvent(order.setMessage(t.getMessage()).setStatus(OrderStatus.INVENTORY_REVERT_FAILURE)))
+            .subscribe()
+            .with(
+                    item -> Log.infov("product inventory reverted succeed with: {0}", item),
+                    t -> Log.error("product inventory reverted failed with:" + order, t));
         break;
     }
   }
 
+  void publishOrderEvent(OrderInfo order) {
+    Log.infov("produce service publishes order event with: Order=<{0}, {1}>", order.id, order.orderStatus);
+    publisher.publish("orders", order);
+  }
+
   Multi<Product> reserveOrder(OrderInfo order) {
-    Log.infov("reserve order with: Order<{0}>", order.id);
+    Log.infov("product service starts to reserve order with: Order<{0}, {1}>", order.id, order.orderStatus);
     return Uni.createFrom().item(order)
             .onItem().transformToMulti(o -> Multi.createFrom().iterable(o.orderItems))
             .onItem().transformToUniAndMerge(this::findProduct)
@@ -67,7 +67,7 @@ public class ProductService {
   }
 
   Multi<Product> revertOrder(OrderInfo order) {
-    Log.infov("revert order with: Order<{0}>", order.id);
+    Log.infov("product service starts to revert order with: Order<{0}, {1}>", order.id, order.orderStatus);
     return Uni.createFrom().item(order)
             .onItem().transformToMulti(o -> Multi.createFrom().iterable(o.orderItems))
             .onItem().transformToUniAndMerge(this::findProduct)

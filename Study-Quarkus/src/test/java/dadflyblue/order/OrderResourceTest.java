@@ -17,7 +17,7 @@ class OrderResourceTest {
     given()
             .contentType(ContentType.JSON)
             .body(Order.newOrder(
-                    Address.of(1L, "ShopRite of Hoboken", "900", "Madison St", "Hoboken", "07030"),
+                    Address.of(1L, "ShopRite of Hoboken", "900", "Madison St", "Hoboken", "NJ", "07030"),
                     Set.of(OrderItem.of(2, 1), OrderItem.of(4, 1)),
                     "credit", 100L))
             .when()
@@ -25,6 +25,6 @@ class OrderResourceTest {
             .then()
             .statusCode(200)
             .body("id", is(notNullValue()),
-                    "orderItems[0].order.id", is(notNullValue()));
+                    "orderItems[0]", is(notNullValue()));
   }
 }

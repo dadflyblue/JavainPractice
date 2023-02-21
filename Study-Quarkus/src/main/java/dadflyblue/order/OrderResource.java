@@ -18,11 +18,11 @@ public class OrderResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Transactional
   public Uni<Order> createOrder(Order order) {
-    Log.infov("Create an order invoked with: {0}", order);
+    Log.infov("create an order invoked with: {0}", order);
     return service.createOrder(order)
             .onFailure().transform(t -> {
-              Log.errorv("Create order failed with: {0}" + order, t);
-              return new WebApplicationException("Order creating failed with: " + order, t);
+              Log.errorv("create order failed with: {0}" + order, t);
+              return new WebApplicationException("order creating failed with: " + order, t);
             });
   }
 
@@ -32,6 +32,19 @@ public class OrderResource {
   public Multi<Order> orders() {
     Log.info("Get all orders invoked.");
     return Order.getAllAsync();
+  }
+
+  @DELETE
+  @Path("/{id}")
+  @Transactional
+  public Uni<Order> deleteOrder(@PathParam("id") Long id) {
+    return Uni.createFrom().item(id)
+            .onItem().transform(Order::<Order>findById)
+            .onItem().ifNull().failWith(new NotFoundException("order not found"))
+            .onItem().transform(o -> {
+              Order.deleteById(o.id);
+              return o;
+            });
   }
 
 }

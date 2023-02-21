@@ -37,6 +37,11 @@ public class OrderInfo {
     return this;
   }
 
+  public OrderInfo setShippingDate(OffsetDateTime date) {
+    this.shippingDate = date;
+    return this;
+  }
+
   public static OrderInfo from(Order s) {
     var order = new OrderInfo();
     {

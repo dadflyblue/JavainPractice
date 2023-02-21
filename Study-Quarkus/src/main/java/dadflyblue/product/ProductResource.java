@@ -3,6 +3,7 @@ package dadflyblue.product;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.smallrye.common.constraint.NotNull;
 import io.smallrye.faulttolerance.api.FaultTolerance;
+import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.faulttolerance.Bulkhead;
 
 import javax.inject.Inject;
@@ -51,11 +52,8 @@ public class ProductResource {
   @POST
   @Transactional
   @Bulkhead(5)
-  public Product updateProduct(@NotNull Product product) {
-    Product.update(
-      "set name=?1, price=?2, category=?3, stock=?4 where id=?5",
-      product.name, product.price, product.category, product.stock, product.id);
-    return product;
+  public Uni<Product> updateProduct(@NotNull Product product) {
+    return Product.updateAsync(product);
   }
 
   @DELETE

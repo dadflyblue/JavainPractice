@@ -23,6 +23,7 @@ public class OrderService {
   }
 
   Order publishOrderEvent(Order order, String address) {
+    Log.infov("order service publishes order event: {0} to {1}", order, address);
     publisher.publish(address, OrderInfo.from(order));
     return order;
   }
@@ -30,16 +31,15 @@ public class OrderService {
   @ConsumeEvent(value = "orders")
   @SuppressWarnings("unused")
   void onOrderReceived(OrderInfo order) {
-    Log.infov("start to handle with order event: Order<{0}>", order.id);
-    Uni.createFrom().item(order)
+    Log.infov("order service starts to handle order event: Order<{0}, {1}>", order.id, order.orderStatus);
+    Uni.createFrom().item(() -> Order.<Order>findById(order.id))
         .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
-        .onItem().transformToUni(o -> Order.findByIdAsync(o.id))
-        .onItem().ifNull().fail()
-        .onItem().transform(this::handleOrderStatus)
+        .onItem().ifNull().fail() // raises NoSuchElementException if failed
+        .onItem().transform(o -> handleOrderStatus(o.setStatus(order.orderStatus)))
         .onItem().transformToUni(Order::updateAsync)
         .subscribe().with(
-            o -> Log.infov("handled with order event succeed: {0}", o),
-            t -> Log.error("handled with order event failed: " + order, t)
+            o -> Log.infov("order service handled order event succeed: {0}", o),
+            t -> Log.error("order service handled order event failed: " + order, t)
         );
   }
 
