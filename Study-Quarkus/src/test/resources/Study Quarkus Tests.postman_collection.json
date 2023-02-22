@@ -10,7 +10,7 @@
 		{
 			"name": "Get Orders",
 			"request": {
-				"url": "",
+				"url": "localhost:8080/orders",
 				"method": "GET",
 				"header": [],
 				"body": {},
@@ -41,7 +41,7 @@
 		{
 			"name": "Get Products",
 			"request": {
-				"url": "",
+				"url": "localhost:8080/products?pageIndex=0&pageSize=10",
 				"method": "GET",
 				"header": [],
 				"body": {},
@@ -52,7 +52,7 @@
 		{
 			"name": "Get Shipments",
 			"request": {
-				"url": "",
+				"url": "localhost:8080/shipments",
 				"method": "GET",
 				"header": [],
 				"body": {},
