@@ -21,7 +21,7 @@ public class ProductService {
   @Inject
   EventBus publisher;
 
-  @ConsumeEvent(value = "orders.produce")
+  @ConsumeEvent(value = "orders.product")
   void onInventoryEvent(OrderInfo order) {
     Log.infov("product service starts to handle order event: Order<{0}, {1}>", order.id, order.orderStatus);
     switch (order.orderStatus) {

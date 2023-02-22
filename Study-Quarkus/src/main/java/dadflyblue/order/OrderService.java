@@ -55,7 +55,7 @@ public class OrderService {
     switch (order.orderStatus) {
       case INITIATION_SUCCESS:
         order.orderStatus = OrderStatus.RESERVE_INVENTORY;
-        publishOrderEvent(order, "orders.produce");
+        publishOrderEvent(order, "orders.product");
         break;
       case INVENTORY_SUCCESS:
         order.orderStatus = OrderStatus.PREPARE_SHIPPING;
@@ -63,7 +63,7 @@ public class OrderService {
         break;
       case SHIPPING_FAILURE:
         order.orderStatus = OrderStatus.REVERT_INVENTORY;
-        publishOrderEvent(order, "orders.produce");
+        publishOrderEvent(order, "orders.product");
         break;
     }
     return order;
