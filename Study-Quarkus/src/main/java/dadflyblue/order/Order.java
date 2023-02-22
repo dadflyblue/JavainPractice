@@ -51,11 +51,6 @@ public class Order extends PanacheEntity {
     return this;
   }
 
-  public Order setResponseMessage(String responseMessage) {
-    this.responseMessage = responseMessage;
-    return this;
-  }
-
   @Transactional
   public static Uni<Order> saveAsync(Order order) {
     return Uni.createFrom().item(order)
@@ -81,6 +76,17 @@ public class Order extends PanacheEntity {
   public static Multi<Order> getAllAsync() {
     return Multi.createFrom().items(
             () -> Order.<Order>listAll().stream());
+  }
+
+  @Transactional
+  public static Order getById(Long id) {
+    return findById(id);
+  }
+
+  @Transactional
+  public static void removeById(Long id) {
+    deleteById(id);
+    flush();
   }
 
   @Transactional

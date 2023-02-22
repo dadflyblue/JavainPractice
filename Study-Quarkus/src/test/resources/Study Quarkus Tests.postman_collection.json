@@ -1,19 +1,25 @@
 {
-	"variables": [],
 	"info": {
+		"_postman_id": "db705b44-4704-4684-b5b7-5e74d84e3b74",
 		"name": "Study Quarkus Tests",
-		"_postman_id": "a4fe01a3-ee37-44b9-2909-d6cc5d8b0180",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Get Orders",
 			"request": {
-				"url": "localhost:8080/orders",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"url": {
+					"raw": "localhost:8080/orders",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders"
+					]
+				},
 				"description": "Test order service"
 			},
 			"response": []
@@ -21,42 +27,92 @@
 		{
 			"name": "Create Order",
 			"request": {
-				"url": "localhost:8080/orders",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"shippingAddress\": {\n\t\t\"id\": 1,\n\t\t\"name\": \"ShopRite of Hoboken\",\n\t\t\"house\": \"900\",\n\t\t\"street\": \"Madison St\",\n\t\t\"city\": \"Hoboken\",\n\t\t\"zip\": \"07030\"\n\t},\n\t\"orderItems\": [{\"productId\":2, \"quantity\":1},{\"productId\":4,\"quantity\":1}],\n\t\"paymentMode\": \"credit\",\n\t\"total\": 1000,\n\t\"userId\": \"1234\"\n}"
+					"raw": "{\n\t\"shippingAddress\": {\n\t\t\"id\": 1,\n\t\t\"name\": \"ShopRite of Hoboken\",\n\t\t\"house\": \"900\",\n\t\t\"street\": \"Madison St\",\n\t\t\"city\": \"Hoboken\",\n        \"state\": \"NJ\",\n\t\t\"zip\": \"07030\"\n\t},\n\t\"orderItems\": [{\"productId\":2, \"quantity\":2},{\"productId\":4,\"quantity\":1}],\n\t\"paymentMode\": \"credit\",\n\t\"total\": 1000,\n\t\"userId\": \"1234\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "localhost:8080/orders",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Get Products",
 			"request": {
-				"url": "localhost:8080/products?pageIndex=0&pageSize=10",
 				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"url": {
+					"raw": "localhost:8080/products?pageIndex=0&pageSize=10",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "pageIndex",
+							"value": "0"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						}
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Get Shipments",
 			"request": {
-				"url": "localhost:8080/shipments",
 				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"url": {
+					"raw": "localhost:8080/shipments",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"shipments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Order",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/orders/18",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders",
+						"18"
+					]
+				}
 			},
 			"response": []
 		}

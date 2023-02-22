@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @Path("/orders")
 public class OrderResource {
@@ -37,13 +38,13 @@ public class OrderResource {
   @DELETE
   @Path("/{id}")
   @Transactional
-  public Uni<Order> deleteOrder(@PathParam("id") Long id) {
+  public Uni<Response> deleteOrder(@PathParam("id") Long id) {
     return Uni.createFrom().item(id)
-            .onItem().transform(Order::<Order>findById)
+            .onItem().transform(Order::getById)
             .onItem().ifNull().failWith(new NotFoundException("order not found"))
             .onItem().transform(o -> {
-              Order.deleteById(o.id);
-              return o;
+              Order.removeById(o.id);
+              return Response.ok().build();
             });
   }
 

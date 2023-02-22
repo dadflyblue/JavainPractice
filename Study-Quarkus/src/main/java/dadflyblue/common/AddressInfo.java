@@ -29,11 +29,11 @@ public class AddressInfo {
 
   @Override
   public String toString() {
-    return getFormattedShippingAddress();
+    return "AddressInfo{" + getFormattedShippingAddress() + "}";
   }
 
   public String getFormattedShippingAddress() {
-    return MessageFormat.format("{0} {1} {2}, {3}, {4}, {5}", name, house,
+    return MessageFormat.format("{0}, {1} {2}, {3}, {4}, {5}", name, house,
             street, city, state, zip);
   }
 }

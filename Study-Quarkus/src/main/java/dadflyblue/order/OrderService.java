@@ -35,13 +35,20 @@ public class OrderService {
     Uni.createFrom().item(() -> Order.<Order>findById(order.id))
         .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
         .onItem().ifNull().fail() // raises NoSuchElementException if failed
-        .onItem().transform(o -> handleOrderStatus(
-                o.setStatus(order.orderStatus).setResponseMessage(order.responseMessage)))
+        .onItem().transform(o -> mergeProperties(order, o))
+        .onItem().transform(this::handleOrderStatus)
         .onItem().transformToUni(Order::updateAsync)
         .subscribe().with(
             o -> Log.infov("order service handled order event succeed: {0}", o),
             t -> Log.error("order service handled order event failed: " + order, t)
         );
+  }
+
+  Order mergeProperties(OrderInfo newer, Order order) {
+    order.orderStatus = newer.orderStatus;
+    order.responseMessage = newer.responseMessage;
+    order.shippingDate = newer.shippingDate;
+    return order;
   }
 
   Order handleOrderStatus(Order order) {

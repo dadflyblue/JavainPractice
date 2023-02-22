@@ -25,6 +25,6 @@ class OrderResourceTest {
             .then()
             .statusCode(200)
             .body("id", is(notNullValue()),
-                    "orderItems[0]", is(notNullValue()));
+                    "orderItems[0].order.id", is(notNullValue()));
   }
 }
