@@ -9,11 +9,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <modules>
-    <module>CS-Princeton</module>
     <module>Java-Generic</module>
     <module>Java-Concurrent</module>
     <module>Study-Quarkus</module>
-    <module>Algorithms-Princeton</module>
   </modules>
 
   <properties>
