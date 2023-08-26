@@ -11,7 +11,7 @@
   <modules>
     <module>Java-Generic</module>
     <module>Java-Concurrent</module>
-    <module>Study-Quarkus</module>
+    <module>Java-Quarkus</module>
   </modules>
 
   <properties>
