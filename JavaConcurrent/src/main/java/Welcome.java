@@ -13,28 +13,18 @@ public class Welcome {
       workers.add(new Worker(1000 + random.nextInt(5000), i));
     }
 
-    long start = System.currentTimeMillis();
-    var fs = ForkJoinPool.commonPool().invokeAll(workers);
-    waitAll(fs);
-    long end = System.currentTimeMillis();
-    System.out.printf("all workers(%d) from platform common thread pool returns: %dms%n", count, end-start);
+    testAndAutoClose(workers, ForkJoinPool.commonPool(), "platform common threads pool");
+    testAndAutoClose(workers, Executors.newCachedThreadPool(), "platform cached threads pool");
+    testAndAutoClose(workers, Executors.newVirtualThreadPerTaskExecutor(), "virtual threads pool");
+  }
 
-    try (var exec = Executors.newCachedThreadPool()) {
-      start = System.currentTimeMillis();
-      fs = exec.invokeAll(workers);
+  private static void testAndAutoClose(Collection<? extends Callable<?>> workers, ExecutorService exec, String name) {
+    try (exec) {
+      var start = System.currentTimeMillis();
+      var fs = exec.invokeAll(workers);
       waitAll(fs);
-      end = System.currentTimeMillis();
-      System.out.printf("all workers(%d) from platform cached threads pool returns: %dms%n", count, end-start);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-
-    try (var exec = Executors.newVirtualThreadPerTaskExecutor()) {
-      start = System.currentTimeMillis();
-      fs = exec.invokeAll(workers);
-      waitAll(fs);
-      end = System.currentTimeMillis();
-      System.out.printf("all workers(%d) from virtual threads returns: %dms%n", count, end-start);
+      var end = System.currentTimeMillis();
+      System.out.printf("all workers(%d) from %s returns: %dms%n", workers.size(), name, end-start);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -56,7 +46,7 @@ public class Welcome {
       public Void call() {
         try {
           System.out.println(
-              "waiter - " + id + " at: " + Thread.currentThread());
+              "waiter - " + id + " exec on: " + Thread.currentThread());
           Thread.sleep(timeout);
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
