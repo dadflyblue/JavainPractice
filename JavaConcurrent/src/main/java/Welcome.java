@@ -18,7 +18,7 @@ public class Welcome {
     testAndAutoClose(workers, Executors.newVirtualThreadPerTaskExecutor(), "virtual threads pool");
   }
 
-  private static void testAndAutoClose(Collection<? extends Callable<?>> workers, ExecutorService exec, String name) {
+  private static void testAndAutoClose(Collection<? extends Callable<Void>> workers, ExecutorService exec, String name) {
     try (exec) {
       var start = System.currentTimeMillis();
       var fs = exec.invokeAll(workers);
