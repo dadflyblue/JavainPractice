@@ -1,9 +1,9 @@
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.*;;
+import java.util.concurrent.*;
 
-public class Welcome {
+public class ThreadPoolTest {
 
   public static void main(String[] args) {
     final var count = Runtime.getRuntime().availableProcessors() * 3;
@@ -46,7 +46,7 @@ public class Welcome {
       public Void call() {
         try {
           System.out.println(
-              "worker - " + id + " exec on: " + Thread.currentThread());
+              "worker - " + id + " is working on: " + Thread.currentThread());
           Thread.sleep(timeout);
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
