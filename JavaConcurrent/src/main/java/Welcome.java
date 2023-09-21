@@ -1,29 +1,55 @@
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.*;;
 
 public class Welcome {
-  public static void main(String[] args) {
 
-    for (int i = 0; i < Runtime.getRuntime().availableProcessors() + 10 ; i++) {
-      ForkJoinPool.commonPool().submit(new Waiter());
+  public static void main(String[] args) {
+    final var count = Runtime.getRuntime().availableProcessors() * 3;
+    var workers = new ArrayList<Worker>(count);
+    for (int i = 0; i < count ; i++) {
+      workers.add(new Worker(5000, i));
     }
 
-    boolean b = ForkJoinPool.commonPool().awaitQuiescence(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-    System.out.println("hello " + b);
+    long start = System.currentTimeMillis();
+    var fs = ForkJoinPool.commonPool().invokeAll(workers);
+    waitAll(fs);
+    long end = System.currentTimeMillis();
+    System.out.printf("all workers(%d) from platform threads returns: %dms%n", count, end-start);
+
+    try (var exec = Executors.newVirtualThreadPerTaskExecutor()) {
+      start = System.currentTimeMillis();
+      fs = exec.invokeAll(workers);
+      waitAll(fs);
+      end = System.currentTimeMillis();
+      System.out.printf("all workers(%d) from virtual threads returns: %dms%n", count, end-start);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  static class Waiter implements Runnable {
-    static final AtomicInteger C = new AtomicInteger();
-
-    @Override
-    public void run() {
+  private static void waitAll(Collection<? extends Future<?>> fs) {
+    fs.forEach(f -> {
       try {
-        System.out.println("waiter - " + C.incrementAndGet());
-        Thread.sleep(10000);
-      } catch (InterruptedException e) {
+        f.get();
+      } catch (InterruptedException | ExecutionException e) {
         throw new RuntimeException(e);
       }
-    }
+    });
   }
+
+  record Worker(long timeout, long id) implements Callable<Void> {
+
+    @Override
+      public Void call() {
+        try {
+          System.out.println(
+              "waiter - " + id + " at: " + Thread.currentThread());
+          Thread.sleep(timeout);
+        } catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+        return null;
+      }
+    }
 }
