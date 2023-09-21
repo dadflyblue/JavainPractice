@@ -2,9 +2,9 @@ package dadflyblue.shipping;
 
 import io.smallrye.mutiny.Uni;
 
-import javax.transaction.Transactional;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 import java.util.List;
 
 @Path("/shipments")

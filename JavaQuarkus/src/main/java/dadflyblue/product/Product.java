@@ -3,8 +3,8 @@ package dadflyblue.product;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.mutiny.Uni;
 
-import javax.persistence.Entity;
-import javax.transaction.Transactional;
+import jakarta.persistence.Entity;
+import jakarta.transaction.Transactional;
 
 @Entity(name = "products")
 public class Product extends PanacheEntity {

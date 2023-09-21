@@ -7,9 +7,9 @@ import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.vertx.core.eventbus.EventBus;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
 public class OrderService {
@@ -29,7 +29,6 @@ public class OrderService {
   }
 
   @ConsumeEvent(value = "orders")
-  @SuppressWarnings("unused")
   void onOrderReceived(OrderInfo order) {
     Log.infov("order service starts to handle order event: Order<{0}, {1}>", order.id, order.orderStatus);
     Uni.createFrom().item(() -> Order.<Order>findById(order.id))
@@ -64,6 +63,8 @@ public class OrderService {
       case SHIPPING_FAILURE:
         order.orderStatus = OrderStatus.REVERT_INVENTORY;
         publishOrderEvent(order, "orders.product");
+        break;
+      default:
         break;
     }
     return order;

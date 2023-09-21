@@ -2,9 +2,11 @@ package dadflyblue.order;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-@Entity(name = "addresses")
+@Entity
+@Table(name = "addresses")
 public class Address extends PanacheEntity {
   public String name;
   public String house;

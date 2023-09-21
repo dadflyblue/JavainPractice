@@ -4,8 +4,8 @@ import dadflyblue.common.OrderInfo;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.mutiny.Uni;
 
-import javax.persistence.Entity;
-import javax.transaction.Transactional;
+import jakarta.persistence.Entity;
+import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.util.List;
 

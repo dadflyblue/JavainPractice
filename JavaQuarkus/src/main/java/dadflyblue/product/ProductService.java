@@ -11,11 +11,10 @@ import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.smallrye.mutiny.tuples.Tuple2;
 import io.vertx.core.eventbus.EventBus;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
-@SuppressWarnings("unused")
 public class ProductService {
 
   @Inject
@@ -48,6 +47,8 @@ public class ProductService {
             .with(
                     item -> Log.infov("product inventory reverted succeed with: {0}", item),
                     t -> Log.error("product inventory reverted failed with:" + order, t));
+        break;
+      default:
         break;
     }
   }

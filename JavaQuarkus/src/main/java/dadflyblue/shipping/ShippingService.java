@@ -8,12 +8,11 @@ import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import io.vertx.core.eventbus.EventBus;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.OffsetDateTime;
 
 @ApplicationScoped
-@SuppressWarnings("unused")
 public class ShippingService {
 
   @Inject

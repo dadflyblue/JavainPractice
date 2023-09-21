@@ -3,7 +3,7 @@ package dadflyblue.fruit;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.mutiny.Multi;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity(name = "fruits")
 public class Fruit extends PanacheEntity {

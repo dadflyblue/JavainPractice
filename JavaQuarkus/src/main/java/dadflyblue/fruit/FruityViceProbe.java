@@ -5,10 +5,9 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.Readiness;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-@SuppressWarnings("unused")
 public class FruityViceProbe {
 
   @ConfigProperty(name = "fruity/mp-rest/url")

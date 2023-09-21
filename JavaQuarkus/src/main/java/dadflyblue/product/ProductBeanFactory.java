@@ -4,14 +4,13 @@ import io.smallrye.faulttolerance.api.FaultTolerance;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.util.Collections;
 
 @ApplicationScoped
-@SuppressWarnings("unused") // used by cdi
 public class ProductBeanFactory {
 
   @ConfigProperty(name = "products.request.limit", defaultValue = "3")
@@ -22,7 +21,6 @@ public class ProductBeanFactory {
 
   @Produces
   @Named("products")
-  @SuppressWarnings("unused") // used by @Inject
   public FaultTolerance<PageResult<Product>> createProductFaultTolerance() {
     return FaultTolerance.<PageResult<Product>>create()
             .withFallback()

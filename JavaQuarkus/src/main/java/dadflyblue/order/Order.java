@@ -4,13 +4,13 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 
-import javax.persistence.*;
-import javax.transaction.Transactional;
+import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity(name = "orders")
 public class Order extends PanacheEntity {
