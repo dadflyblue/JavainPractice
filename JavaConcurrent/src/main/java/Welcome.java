@@ -46,7 +46,7 @@ public class Welcome {
       public Void call() {
         try {
           System.out.println(
-              "waiter - " + id + " exec on: " + Thread.currentThread());
+              "worker - " + id + " exec on: " + Thread.currentThread());
           Thread.sleep(timeout);
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
