@@ -30,7 +30,7 @@ public class OrderService {
 
   @ConsumeEvent(value = "orders")
   void onOrderReceived(OrderInfo order) {
-    Log.infov("order service starts to handle order event: Order<{0}, {1}>", order.id, order.orderStatus);
+    Log.infov("order service starts to handle order event: Order<{0}, {1}, {2}>", order.id, order.orderStatus, order.shippingAddress.id);
     Uni.createFrom().item(() -> Order.<Order>findById(order.id))
         .runSubscriptionOn(Infrastructure.getDefaultWorkerPool())
         .onItem().ifNull().fail() // raises NoSuchElementException if failed

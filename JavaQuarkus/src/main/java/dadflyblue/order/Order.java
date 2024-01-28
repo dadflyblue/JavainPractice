@@ -62,7 +62,7 @@ public class Order extends PanacheEntity {
     return Uni.createFrom().item(order)
             .onItem().transform(o -> {
               update("set " +
-                      "userId=?1, total=?2, paymentMode=?3, addressId=?4, " +
+                      "userId=?1, total=?2, paymentMode=?3, shippingAddress.id=?4, " +
                       "shippingDate=?5, orderStatus=?6, responseMessage=?7 " +
                       "where id=?8",
                       o.userId, o.total, o.paymentMode, o.shippingAddress.id,
@@ -99,6 +99,6 @@ public class Order extends PanacheEntity {
 
   @Override
   public String toString() {
-    return "Order<" + id + ", " + orderStatus + ">";
+    return "Order<" + id + ", " + orderStatus + "," + shippingAddress.id + ">";
   }
 }
